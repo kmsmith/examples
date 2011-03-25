@@ -1,7 +1,7 @@
 /*
  * 6 in base 3 is 20
  *
- * Usage:  java BaseString 6 3
+ * Usage:  java BaseXString 6 3
  * 
  * Only handles positive integers
  *

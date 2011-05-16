@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Flickr Test</title>
+        <style>
+            body {
+                background-color: #888;
+                font-family: Arial, Helvetica, Sans-Serif;
+                font-size: 12px;
+                font-weight: bold;
+                margin: 50px 0;
+                padding: 0;
+            }
+            img {
+                float: left;
+            }
+            #content {
+                width: 800px;
+                margin: 0 auto;
+                padding: 0;
+                text-align: center;
+            }
+            #gallery {
+                padding: 25px 0;
+            }
+        </style>
+        <script src="flickr_key.js"></script>
+        <script type="text/javascript">
+            function getUserNSID() {
+                var nsid = "";
+                var xmlhttp;
+
+                if (window.XMLHttpRequest) {
+                    xmlhttp = new XMLHttpRequest();
+                }
+                
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                        var flickrResponse = JSON.parse(xmlhttp.responseText);
+
+                        if (flickrResponse.stat === "ok") {
+                            nsid = flickrResponse.user.nsid;
+                        }
+                    }
+                }
+
+                var key = getFlickrAPIKey();
+                var username = document.getElementById("username_textbox").value;
+
+                var requestURL = "";
+                requestURL += "http://api.flickr.com/services/rest/?";
+                requestURL += "method=flickr.people.findByUsername";
+                requestURL += "&api_key=" + key.key;
+                requestURL += "&username=" + username;
+                requestURL += "&format=json";
+                requestURL += "&nojsoncallback=1";
+
+                xmlhttp.open("GET", requestURL, false);  // no async - wait for result before return
+                xmlhttp.send();
+                return nsid;
+            }
+
+            function populateGalleryWithUserFavorites() {
+                var xmlhttp;
+
+                if (window.XMLHttpRequest) {
+                    xmlhttp = new XMLHttpRequest();
+                }
+                
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                        var flickrResponse = JSON.parse(xmlhttp.responseText);
+
+                        if (flickrResponse.stat === "ok") {
+                            var galleryDiv = document.getElementById("gallery");
+                            galleryDiv.innerHTML = "";
+                            var numPhotos = flickrResponse.photos.photo.length;
+                            for (var i = 0; i < numPhotos; i++) {
+                                var photoData = flickrResponse.photos.photo[i];
+                                var thumbImg = getFlickrImgElement(photoData);
+                                var photoLink = getFlickrPhotoPageLink(photoData);
+                                photoLink.appendChild(thumbImg);
+                                galleryDiv.appendChild(photoLink);
+                            }
+                        }
+                    }
+                }
+
+                var apiKey = getFlickrAPIKey();
+                var nsid = getUserNSID();
+
+                var requestURL = "";
+                requestURL += "http://api.flickr.com/services/rest/?";
+                requestURL += "method=flickr.favorites.getPublicList";
+                requestURL += "&api_key=" + apiKey.key;
+                requestURL += "&user_id=" + nsid;
+                requestURL += "&format=json";
+                requestURL += "&nojsoncallback=1";
+
+                xmlhttp.open("GET", requestURL, true);
+                xmlhttp.send();
+            }
+
+            function getFlickrImgElement(photoData) {
+                var imgURL = "";
+                imgURL += "http://farm" + photoData.farm;
+                imgURL += ".static.flickr.com";
+                imgURL += "/" + photoData.server;
+                imgURL += "/" + photoData.id + "_" + photoData.secret;
+                //imgURL += "_m";  // 240 pixel image
+                imgURL += "_t";  // 100 pixel image
+                imgURL += ".jpg";
+
+                var newImg = document.createElement("img");
+                newImg.src = imgURL;
+                newImg.alt = photoData.title;
+                newImg.title = photoData.title;
+                return newImg;
+            }
+
+            function getFlickrPhotoPageLink(photoData) {
+                var photoPageURL = "";
+                photoPageURL += "http://www.flickr.com/photos";
+                photoPageURL += "/" + photoData.owner;
+                photoPageURL += "/" + photoData.id;
+
+                var newLink = document.createElement("a");
+                newLink.href = photoPageURL;
+                return newLink;
+            }
+        </script>
+    </head>
+    <body>
+        <div id="content">
+            <form>
+                Username:
+                <input type="text" id="username_textbox" value="" />
+                <input type="button" value="Get Favorites" onclick="populateGalleryWithUserFavorites();" />
+            </form>
+            <div id="gallery"></div>
+        </div>
+    </body>
+</html>
+

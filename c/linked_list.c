@@ -1,53 +1,64 @@
-#include <iostream>
-
-using namespace std;
+#include <stdio.h>
+#include <stdlib.h>
 
 struct node {
     int value;
     struct node * next;
 };
 
-void insert(node* & head, int newValue) {
-    node * newNode = new node();
-    newNode->value = newValue;
-    newNode->next = head;
-    head = newNode;
+struct node * get_new_node(int new_value) {
+    struct node * new_node = malloc(sizeof(struct node));
+    if (new_node) {
+        new_node->value = new_value;
+        new_node->next = NULL;
+    }
+    return new_node;
 }
 
-void printList(node* head) {
+struct node * insert_node(struct node * head, struct node * new_node) {
+    if (new_node) {
+        new_node->next = head;
+        return new_node;
+    }
+    return head;
+}
+
+void print_list(struct node* head) {
     while (head) {
-        cout << head->value << endl;
+        printf("%d\n", head->value);
         head = head->next;
     }
 }
 
-void deleteList(node* head) {
+void delete_list(struct node* head) {
+    struct node * temp = NULL;
     while (head) {
-        node* temp = head;
+        temp = head;
         head = temp->next;
-        delete temp;
+        free(temp);
     }
 }
 
-void reverseList(node* & head) {
-    node* prev = NULL;
+struct node * reverse_list(struct node* head) {
+    struct node * prev = NULL;
+    struct node * next = NULL;
     while (head) {
-        node* next = head->next;
+        next = head->next;
         head->next = prev;
         prev = head;
         head = next;
     }
-    head = prev;
+    return prev;
 }
 
 int main() {
-    node * head = NULL;
-    insert(head, 1);
-    insert(head, 2);
-    insert(head, 3);
-    printList(head);
-    reverseList(head);
-    printList(head);
-    deleteList(head);
+    struct node * list = NULL;
+    list = insert_node(list, get_new_node(1));
+    list = insert_node(list, get_new_node(2));
+    list = insert_node(list, get_new_node(3));
+    print_list(list);
+    list = reverse_list(list);
+    print_list(list);
+    delete_list(list);
     return 0;
 }

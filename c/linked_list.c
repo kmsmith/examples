@@ -15,6 +15,10 @@ struct node * get_new_node(int new_value) {
     return new_node;
 }
 
+/*
+ * Insert new node at head of list and return pointer
+ * to new node as it is the new list head
+ */
 struct node * insert_node(struct node * head, struct node * new_node) {
     if (new_node) {
         new_node->next = head;
@@ -39,6 +43,10 @@ void delete_list(struct node* head) {
     }
 }
 
+/*
+ * Walk the list reversing the pointers as we go
+ * When done, return the new list head
+ */
 struct node * reverse_list(struct node* head) {
     struct node * prev = NULL;
     struct node * next = NULL;

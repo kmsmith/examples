@@ -1,23 +1,30 @@
-#include <iostream>
-#include <string>
-#include <cstring>
+#include <stdio.h>
 #include <math.h>
+#include <string.h>
 
-using namespace std;
-
-int a2i(const char* a) {
-    int len = strlen(a);
-    cout << len << endl;
+int a2i(char* num_str) {
+    int len = strlen(num_str);
     int sum = 0;
     int i = 0;
-    for (int mult = pow(10,len-1); mult >= 1; mult /= 10, i++) {
-        sum += (a[i]-'0') * mult;
+    int mult = 0;
+    for (mult = pow(10,len-1); mult >= 1; mult /= 10, i++) {
+        sum += (num_str[i]-'0') * mult;
     }
     return sum;
 }
 
-int main() {
-    string test("123");
-    cout << a2i(test.c_str()) << endl;
+int main(int argc, char** argv) {
+    int a, b;
+    float avg;
+    if (argc == 3) {
+        a = a2i(argv[1]);
+        b = a2i(argv[2]);
+        avg = (a+b) / 2.0;
+        printf("%.2f\n", avg);
+    }
+    else {
+        printf("Outputs average of two numbers\n");
+        printf("Usage:  %s <num1> <num2>\n", argv[0]);
+    }
     return 0;
 }

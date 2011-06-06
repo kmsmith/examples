@@ -4,11 +4,9 @@
 
 def luhn_sum(num)
     x2 = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
-    #i = 0
     sum = 0
     num.to_s.reverse.chars.each_with_index do |x,i|
         sum = sum + ((i%2) > 0 ? x2[x.to_i] : x.to_i)
-        #i = i + 1
     end
     sum
 end

@@ -24,7 +24,6 @@ def add_luhn_digit(num)
 end
 
 test = 4992739871
-puts luhn_sum(test)
 puts "Testing #{test}"
 puts "IsValid?  #{is_valid_luhn(test)}"
 puts "Add Digit:  #{test = add_luhn_digit(test)}"
